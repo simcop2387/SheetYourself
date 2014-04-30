@@ -6,7 +6,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Bootstrap 101 Template</title>
+    <title>Sheet Yourself</title>
     
     <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
@@ -18,10 +18,44 @@
     body {
   padding-top: 50px;
 }
-.starter-template {
-  padding: 40px 15px;
-  text-align: center;
+#main {
 }
+
+.character {
+padding-top: 50px;
+}
+
+.sheet {
+  margin-bottom: 10px;
+  padding: 5px 20px 20px 20px;
+  background-color: rgb(224, 224, 224);
+}
+
+.sheet h1 {
+  font-size: 25px;
+  line-height: 25px;
+  width: 100%;
+  background-color: rgb(0, 127, 64);
+  padding: 3px;
+}
+
+.category h2 {
+  font-size: 20px;
+  line-height: 20px;
+  width: 100%;
+  background-color: rgb(0, 0, 64);
+  color: rgb(192, 192, 192);
+  padding: 3px;
+}
+
+.attribute {
+  background-color: rgb(127, 127, 127);
+}
+
+.attribute:nth-child(odd) {
+  background-color: rgb(192, 192, 192);
+}
+
 </style>
     
   </head>
@@ -47,14 +81,12 @@
 
     <div class="container">
 
-      <div class="starter-template">
-        <h1>Bootstrap starter template</h1>
-        <p class="lead">Use this document as a way to quickly start any new project.<br> All you get is this text and a mostly barebones HTML document.</p>
+      <div id='main'>
       </div>
 
     </div><!-- /.container -->
- 
-     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+  
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
 
     <!-- Latest compiled and minified JavaScript -->
@@ -62,10 +94,62 @@
  
     <script>
     $(document).ready(function () {
-      $.getJSON('http://www.simcop2387.info/sheets.json', null, function(data) {
+      $.getJSON('sheets.json', function(listings) {
         // Start rendering!
-        //console.log("FOOBAR");
-        alert("FOOBRA");
+        var $sheets = listings.sheets;
+        
+        $.each($sheets, function(index, value) {
+          // Get the file off the server
+          $.getJSON(value, function(character) {
+            var ident = value.replace(/\.[^/.]+$/, "");
+            
+            $('#bar').append('<li><a href="#'+ident+'">'+ident+'</a></li>');
+            
+            console.log(character);
+            
+            var _char = $('<div>');
+            _char.addClass('character');
+            _char.attr('id', ident);
+            // I could setup a better structure for the links here. TODO
+            
+            $.each(character.sheets, function(index, sheet) {
+              var sheetident = ident+'_'+index;
+              var _sheet = $('<div>');
+              _sheet.addClass('sheet');
+              _sheet.attr('id', sheetident);
+              
+              _sheet.append('<h1>'+sheet.name+'</h1>');
+              // This should probably be slightly saner for sizing, probably CSS TODO
+              _sheet.append('<img height="100" src="data:;base64,'+sheet.image+'">');
+              
+              var _attrib = function(attribs, parent) {
+                $.each(attribs, function(index, attrib) {
+                  var _attr = $("<div>");
+                  _attr.addClass("attribute");
+                  _attr.append(attrib.text);  // I should check is-visible but I don't know how to set it TODO
+                  
+                  parent.append(_attr);
+                });
+              };
+              
+              _attrib(sheet.attributes, _sheet);
+              
+              $.each(sheet.categories, function (index, category) {
+                var catident = sheetident+'_'+index;
+                var _category = $("<div>");
+                _category.addClass('category');
+                _category.append("<h2>"+category.text+"</h2>");
+                _attrib(category.attributes, _category);
+                
+                _sheet.append(_category);
+              });
+              
+              _char.append(_sheet);
+            });
+            
+            _char.appendTo($("#main"));
+          });
+        });
       });
     });
     </script>
