@@ -1,9 +1,3 @@
 
-ORGMAIL=/home/ryan/workspace/SheetYourself/email/tmp
-DEFAULT=${ORGMAIL}
-MAILDIR=/home/ryan/workspace/SheetYourself/email/tmp
-
 :0
-| cat >> /tmp/emails
-
-#/home/ryan/workspace/SheetYourself/email/extract.pl
+| /home/ryan/workspace/SheetYourself/email/extract.pl
