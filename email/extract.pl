@@ -1,5 +1,6 @@
-#!/home/ryan/perl5/perlbrew/perls/perl-5.16.3/bin/perl
-
+#!/home/ryan/perl5/perlbrew/perls/perl-5.16.0/bin/perl
+# /home/ryan/perl5/perlbrew/perls/perl-5.16.3/bin/perl
+# 
 use strict;
 use warnings;
 
@@ -9,7 +10,9 @@ use JSON;
 use autodie;
 use v5.10;
 
-my $destination = '/home/ryan/workspace/SheetYourself/';
+umask 0;
+
+my $destination = '/var/www/kobolds/';
 
 #open(STDOUT, ">/tmp/extract.log");
 #open(STDERR, ">/tmp/extracterr.log");
