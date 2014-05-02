@@ -1,4 +1,4 @@
-#!/usr/bin/env perl
+#!/home/ryan/perl5/perlbrew/perls/perl-5.16.3/bin/perl
 
 use strict;
 use warnings;
@@ -37,20 +37,21 @@ for (my $i=0; $i < $num_parts; $i++) {
      close($fh);
      system("gunzip", $destination."/".$mangled.".sheet.gz");
 
-     # update the sheets file
-     open(my $sheets_fh, "<", $destination."/sheets.json");
      my $sheets_data;
-     {local $/; $sheets_data = eval {decode_json <$sheets_fh>} || {};}
-     close($sheets_fh);
-     print Dumper($sheets_data);
 
-     for (@{$sheets_data->{sheets}}) {
-        exit if ($_ eq $mangled.".sheet"); # no need to update
-     }
+     eval {
+       # update the sheets file
+       open(my $sheets_fh, "<", $destination."/sheets.json");
+       {local $/; $sheets_data = eval {decode_json <$sheets_fh>} || {};}
+       close($sheets_fh);
 
+       for (@{$sheets_data->{sheets}}) {
+          exit if ($_ eq $mangled.".sheet"); # no need to update
+       }
+     };
      push @{$sheets_data->{sheets}}, $mangled.".sheet";
 
-     open ($sheets_fh, ">", $destination."/sheets.json");
+     open (my $sheets_fh, ">", $destination."/sheets.json");
      print $sheets_fh encode_json $sheets_data;
      close($sheets_fh);
   }
